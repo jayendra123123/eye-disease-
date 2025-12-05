@@ -4,6 +4,3 @@
 *.pb
 *.tflite
 *.ckpt
-
-# Frontend directory
-frontend/
