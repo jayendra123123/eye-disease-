@@ -1,9 +1,6 @@
 # DeepEye - AI Eye Disease Detection
 
 ## 🔗 How to Connect Frontend to ML Models
-
-Your DeepEye application now has a complete connection between the React frontend and your trained ML models! Here's how it all works:
-
 ## 📁 Project Structure
 
 ```
@@ -136,3 +133,4 @@ Ensemble prediction (combines MobileNet + ResNet)
 3. **Upload an eye image** from your test dataset
 4. **Watch the analysis** happen in real-time
 5. **Check browser console** for API communication logs
+
