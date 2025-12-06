@@ -136,12 +136,3 @@ Ensemble prediction (combines MobileNet + ResNet)
 3. **Upload an eye image** from your test dataset
 4. **Watch the analysis** happen in real-time
 5. **Check browser console** for API communication logs
-
-## 💡 Troubleshooting
-
-- **Backend not starting?** → Check if models exist in root directory
-- **Frontend API errors?** → Ensure backend is running on port 8000
-- **CORS issues?** → Verify frontend runs on localhost:3000
-- **Model loading fails?** → Check TensorFlow installation and model files
-
-Your ML models are now fully connected and ready to detect eye diseases in real-time! 🎉
