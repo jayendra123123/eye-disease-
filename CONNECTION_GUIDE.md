@@ -1,6 +1,5 @@
 # DeepEye - AI Eye Disease Detection
 
-## 🔗 How to Connect Frontend to ML Models
 ## 📁 Project Structure
 
 ```
@@ -133,4 +132,5 @@ Ensemble prediction (combines MobileNet + ResNet)
 3. **Upload an eye image** from your test dataset
 4. **Watch the analysis** happen in real-time
 5. **Check browser console** for API communication logs
+
 
