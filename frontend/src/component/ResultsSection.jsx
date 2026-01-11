@@ -53,74 +53,70 @@ export default function ResultsSection({ analyzing, result, reset }) {
           </div>
         </div>
 
-        {result.detected && (
-          <>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="border-2 border-white/30 p-6 hover:border-white transition-colors">
-                <div className="text-xs tracking-widest text-gray-500 mb-2">CONDITION</div>
-                <div className="font-black text-xl">{result.disease}</div>
-              </div>
-              
-              <div className="border-2 border-white/30 p-6 hover:border-white transition-colors">
-                <div className="text-xs tracking-widest text-gray-500 mb-2">SEVERITY</div>
-                <div className="font-black text-xl">{result.severity}</div>
-              </div>
-            </div>
+        <div className="grid grid-cols-2 gap-6">
+          <div className="border-2 border-white/30 p-6 hover:border-white transition-colors">
+            <div className="text-xs tracking-widest text-gray-500 mb-2">CONDITION</div>
+            <div className="font-black text-xl">{result.disease || 'Unknown'}</div>
+          </div>
+          
+          <div className="border-2 border-white/30 p-6 hover:border-white transition-colors">
+            <div className="text-xs tracking-widest text-gray-500 mb-2">SEVERITY</div>
+            <div className="font-black text-xl">{result.severity || 'N/A'}</div>
+          </div>
+        </div>
 
-            <div className="border-2 border-white/30 p-6 hover:border-white transition-colors">
-              <div className="flex justify-between items-end mb-4">
-                <span className="text-xs tracking-widest text-gray-500">CONFIDENCE LEVEL</span>
-                <span className="text-4xl font-black">{result.confidence}%</span>
-              </div>
-              <div className="w-full h-4 bg-white/10 relative overflow-hidden">
-                <div 
-                  className="bg-white h-4 transition-all duration-1000 ease-out"
-                  style={{ width: `${result.confidence}%` }}
-                />
-              </div>
-            </div>
+        <div className="border-2 border-white/30 p-6 hover:border-white transition-colors">
+          <div className="flex justify-between items-end mb-4">
+            <span className="text-xs tracking-widest text-gray-500">CONFIDENCE LEVEL</span>
+            <span className="text-4xl font-black">{result.confidence}%</span>
+          </div>
+          <div className="w-full h-4 bg-white/10 relative overflow-hidden">
+            <div 
+              className="bg-white h-4 transition-all duration-1000 ease-out"
+              style={{ width: `${result.confidence}%` }}
+            />
+          </div>
+        </div>
 
-            {result.all_predictions && (
-              <div className="pt-6 border-t-2 border-white/20">
-                <h4 className="font-black mb-6 flex items-center gap-3 text-xl tracking-tight">
-                  <Brain className="w-6 h-6" />
-                  ALL PREDICTIONS
-                </h4>
-                <div className="grid grid-cols-2 gap-4">
-                  {Object.entries(result.all_predictions).map(([condition, confidence]) => (
-                    <div key={condition} className="border border-white/20 p-4 hover:border-white/40 transition-colors">
-                      <div className="text-xs tracking-widest text-gray-500 mb-2">
-                        {condition.replace('_', ' ').toUpperCase()}
-                      </div>
-                      <div className="font-black text-lg">{Number(confidence).toFixed(1)}%</div>
-                      <div className="w-full h-2 bg-white/10 mt-2">
-                        <div 
-                          className="bg-white h-2 transition-all duration-1000"
-                          style={{ width: `${confidence}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))}
+        {result.all_predictions && (
+          <div className="pt-6 border-t-2 border-white/20">
+            <h4 className="font-black mb-6 flex items-center gap-3 text-xl tracking-tight">
+              <Brain className="w-6 h-6" />
+              ALL PREDICTIONS
+            </h4>
+            <div className="grid grid-cols-2 gap-4">
+              {Object.entries(result.all_predictions).map(([condition, confidence]) => (
+                <div key={condition} className="border border-white/20 p-4 hover:border-white/40 transition-colors">
+                  <div className="text-xs tracking-widest text-gray-500 mb-2">
+                    {condition.replace('_', ' ').toUpperCase()}
+                  </div>
+                  <div className="font-black text-lg">{Number(confidence).toFixed(1)}%</div>
+                  <div className="w-full h-2 bg-white/10 mt-2">
+                    <div 
+                      className="bg-white h-2 transition-all duration-1000"
+                      style={{ width: `${confidence}%` }}
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
-
-            <div className="pt-6 border-t-2 border-white/20">
-              <h4 className="font-black mb-6 flex items-center gap-3 text-xl tracking-tight">
-                <Sparkles className="w-6 h-6" />
-                RECOMMENDATIONS
-              </h4>
-              <ul className="space-y-4">
-                {result.recommendations.map((rec, i) => (
-                  <li key={i} className="flex items-start gap-4 text-sm">
-                    <div className="w-2 h-2 bg-white mt-2 flex-shrink-0" />
-                    <span className="text-gray-300 leading-relaxed">{rec}</span>
-                  </li>
-                ))}
-              </ul>
+              ))}
             </div>
-          </>
+          </div>
         )}
+
+        <div className="pt-6 border-t-2 border-white/20">
+          <h4 className="font-black mb-6 flex items-center gap-3 text-xl tracking-tight">
+            <Sparkles className="w-6 h-6" />
+            RECOMMENDATIONS
+          </h4>
+          <ul className="space-y-4">
+            {result.recommendations && result.recommendations.map((rec, i) => (
+              <li key={i} className="flex items-start gap-4 text-sm">
+                <div className="w-2 h-2 bg-white mt-2 flex-shrink-0" />
+                <span className="text-gray-300 leading-relaxed">{rec}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
         <button
           onClick={reset}

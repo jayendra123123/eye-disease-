@@ -69,14 +69,24 @@ export default function DiseaseDetection() {
     
     try {
       console.log('🔄 Starting image analysis...');
+      console.log('📁 File:', file.name, 'Size:', file.size, 'Type:', file.type);
+      console.log('🔧 Ensemble mode:', useEnsemble);
+      
       const result = await DeepEyeAPI.predictDisease(file, useEnsemble);
       console.log('✅ Analysis completed:', result);
+      console.log('🔍 Disease detected:', result.detected);
+      console.log('🏥 Disease name:', result.disease);
+      console.log('📊 Confidence:', result.confidence);
+      console.log('⚠️ Severity:', result.severity);
+      
       setResult(result);
       
     } catch (error) {
       console.error('❌ Error analyzing image:', error.message);
+      console.error('📋 Error details:', error);
       
       // Fallback to mock data if API is not available
+      console.warn('⚠️ Using mock data as fallback');
       const mockResult = DeepEyeAPI.getMockPrediction();
       setResult(mockResult);
     }

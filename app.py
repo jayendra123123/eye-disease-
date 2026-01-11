@@ -12,6 +12,41 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Define the custom F1Score metric class
+class F1Score(tf.keras.metrics.Metric):
+    def __init__(self, name='f1', **kwargs):
+        super(F1Score, self).__init__(name=name, **kwargs)
+        self.precision = tf.keras.metrics.Precision()
+        self.recall = tf.keras.metrics.Recall()
+
+    def update_state(self, y_true, y_pred, sample_weight=None):
+        # Convert one-hot labels to class index
+        if y_true.shape[-1] > 1:
+            y_true = tf.argmax(y_true, axis=-1)
+
+        # Convert probabilities to predicted class
+        y_pred = tf.argmax(y_pred, axis=-1)
+
+        self.precision.update_state(y_true, y_pred, sample_weight)
+        self.recall.update_state(y_true, y_pred, sample_weight)
+
+    def result(self):
+        precision = self.precision.result()
+        recall = self.recall.result()
+        return 2 * ((precision * recall) / (precision + recall + 1e-7))
+
+    def reset_states(self):
+        self.precision.reset_states()
+        self.recall.reset_states()
+
+    def get_config(self):
+        base_config = super().get_config()
+        return base_config
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
+
 app = FastAPI(title="DeepEye Disease Detection API", version="1.0.0")
 
 # Enable CORS for React frontend
@@ -34,23 +69,26 @@ def load_models():
     """Load both ML models on startup"""
     global mobilenet_model, resnet_model
     
+    # Define custom objects for model loading
+    custom_objects = {'F1Score': F1Score}
+    
     try:
         # Load MobileNet model
         if os.path.exists("./mobileNet_model.keras"):
-            mobilenet_model = tf.keras.models.load_model("./mobileNet_model.keras")
+            mobilenet_model = tf.keras.models.load_model("./mobileNet_model.keras", custom_objects=custom_objects)
             logger.info("✅ MobileNet model loaded successfully")
         elif os.path.exists("./mobileNet_model.h5"):
-            mobilenet_model = tf.keras.models.load_model("./mobileNet_model.h5")
+            mobilenet_model = tf.keras.models.load_model("./mobileNet_model.h5", custom_objects=custom_objects)
             logger.info("✅ MobileNet model loaded successfully (h5 format)")
         else:
             logger.warning("❌ MobileNet model not found")
 
         # Load ResNet model
         if os.path.exists("./ResNet_model.keras"):
-            resnet_model = tf.keras.models.load_model("./ResNet_model.keras")
+            resnet_model = tf.keras.models.load_model("./ResNet_model.keras", custom_objects=custom_objects)
             logger.info("✅ ResNet model loaded successfully")
         elif os.path.exists("./ResNet_model.h5"):
-            resnet_model = tf.keras.models.load_model("./ResNet_model.h5")
+            resnet_model = tf.keras.models.load_model("./ResNet_model.h5", custom_objects=custom_objects)
             logger.info("✅ ResNet model loaded successfully (h5 format)")
         else:
             logger.warning("❌ ResNet model not found")
@@ -104,10 +142,14 @@ def get_prediction_details(predictions: np.ndarray, model_name: str):
     # Generate recommendations based on detected condition
     recommendations = get_recommendations(predicted_class, severity)
     
+    # Format disease name properly
+    disease_name = predicted_class.replace("_", " ").title()
+    
     return {
         "model_used": model_name,
         "detected": is_disease_detected,
-        "disease": predicted_class.replace("_", " ").title() if is_disease_detected else "No Disease",
+        "disease": disease_name,
+        "predicted_class": predicted_class,
         "confidence": round(confidence, 1),
         "severity": severity if is_disease_detected else "N/A",
         "recommendations": recommendations,
