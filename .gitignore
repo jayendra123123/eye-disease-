@@ -4,3 +4,9 @@
 *.pb
 *.tflite
 *.ckpt
+
+# Python virtual environments
+mlpro/
+venv/
+env/
+ENV/
